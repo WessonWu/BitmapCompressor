@@ -24,14 +24,14 @@ public class BitmapCompressor {
     private InSampleSizeCalculator mCustomCalculator;
     private int mQuality;
     private Bitmap.CompressFormat mCompressFormat;
-
     private String mTargetPath;
 
     private BitmapCompressor(Builder builder) {
-        mImagePaths = new ArrayList<>();
+        mImagePaths = builder.mImagePaths;
         mQuality = builder.mQuality;
         mCustomCalculator = builder.mCustomCalculator;
         mCompressFormat = builder.mCompressFormat;
+        mTargetPath = builder.mTargetPath;
     }
 
     public static Builder with(Context context) {
@@ -46,11 +46,11 @@ public class BitmapCompressor {
                 mCompressFormat);
     }
 
-    public File get(Context context, String imagePath) throws IOException {
+    private File get(Context context, String imagePath) throws IOException {
         return newCompressTask(context, imagePath).compress();
     }
 
-    public List<File> get(Context context, List<String> imagePaths) throws IOException {
+    private List<File> get(Context context, List<String> imagePaths) throws IOException {
         if (imagePaths == null || imagePaths.isEmpty()) {
             return null;
         }
@@ -61,7 +61,7 @@ public class BitmapCompressor {
         return result;
     }
 
-    public void launch(final Context context,
+    private void launch(final Context context,
                        final OnCompressListener onCompressListener) {
         if (onCompressListener == null) {
             throw new IllegalArgumentException("OnCompressListener can not be null.");
