@@ -20,97 +20,64 @@ public class BitmapCompressor {
     private static final String TAG = "BitmapCompressor";
     private final static String DEFAULT_DISK_CACHE_DIR = "bitmap_compressor_cache";
 
-    private Context mContext;
     private List<String> mImagePaths;
-
     private InSampleSizeCalculator mCustomCalculator;
     private int mQuality;
     private Bitmap.CompressFormat mCompressFormat;
 
     private String mTargetPath;
-    private OnCompressListener mOnCompressListener;
 
-    private BitmapCompressor(Context context) {
-        mContext = context;
+    private BitmapCompressor(Builder builder) {
         mImagePaths = new ArrayList<>();
-        mQuality = 75;
-        mCustomCalculator = new ExpectedSizeCalculator();
+        mQuality = builder.mQuality;
+        mCustomCalculator = builder.mCustomCalculator;
+        mCompressFormat = builder.mCompressFormat;
     }
 
-    public static BitmapCompressor with(Context mContext) {
-        return new BitmapCompressor(mContext);
+    public static Builder with(Context context) {
+        return new Builder(context);
     }
 
-    public BitmapCompressor setQuality(int quality) {
-        mQuality = quality;
-        return this;
+    private CompressTask newCompressTask(Context context, String imagePath) {
+        return new CompressTask(new File(imagePath),
+                getImageCacheFile(context, Util.getSuffix(imagePath)),
+                mCustomCalculator,
+                mQuality,
+                mCompressFormat);
     }
 
-    public BitmapCompressor setCompressFormat(Bitmap.CompressFormat format) {
-        mCompressFormat = format;
-        return this;
+    public File get(Context context, String imagePath) throws IOException {
+        return newCompressTask(context, imagePath).compress();
     }
 
-    public BitmapCompressor setCustomCalculator(InSampleSizeCalculator customCalculator) {
-        mCustomCalculator = customCalculator;
-        return this;
-    }
-
-    public BitmapCompressor setCustomTargetPath(String customTargetPath) {
-        mTargetPath = customTargetPath;
-        return this;
-    }
-
-    public BitmapCompressor load(String imagePath) {
-        mImagePaths.add(imagePath);
-        return this;
-    }
-
-    public BitmapCompressor load(List<String> imagePaths) {
-        mImagePaths.addAll(imagePaths);
-        return this;
-    }
-
-    public File get(String imagePath) throws IOException {
-        return newCompressTask(imagePath).compress();
-    }
-
-    public List<File> get(List<String> imagePaths) throws IOException {
+    public List<File> get(Context context, List<String> imagePaths) throws IOException {
         if (imagePaths == null || imagePaths.isEmpty()) {
             return null;
         }
         List<File> result = new ArrayList<>();
         for (String path : imagePaths) {
-            result.add(get(path));
+            result.add(get(context, path));
         }
         return result;
     }
 
-    public void launch(OnCompressListener onCompressListener) {
-        mOnCompressListener = onCompressListener;
-        if (mOnCompressListener == null) {
+    public void launch(final Context context,
+                       final OnCompressListener onCompressListener) {
+        if (onCompressListener == null) {
             throw new IllegalArgumentException("OnCompressListener can not be null.");
         }
         AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
             @Override
             public void run() {
                 try {
-                    mOnCompressListener.onStart();
-                    List<File> result = get(mImagePaths);
-                    mOnCompressListener.onCompleted(result);
+                    onCompressListener.onStart();
+                    List<File> result = get(context, mImagePaths);
+                    onCompressListener.onCompleted(result);
                 } catch (IOException e) {
-                    mOnCompressListener.onError(e);
+                    onCompressListener.onError(e);
                 }
             }
         });
-    }
-
-    private CompressTask newCompressTask(String imagePath) {
-        return new CompressTask(new File(imagePath),
-                getImageCacheFile(mContext, Util.getSuffix(imagePath)),
-                mCustomCalculator,
-                mQuality,
-                mCompressFormat);
     }
 
     /**
@@ -166,5 +133,67 @@ public class BitmapCompressor {
             Log.e(TAG, "default disk cache dir is null");
         }
         return null;
+    }
+
+
+    static class Builder {
+        private Context mContext;
+        private List<String> mImagePaths = new ArrayList<>();
+
+        private InSampleSizeCalculator mCustomCalculator = new ExpectedSizeCalculator();
+        private int mQuality = 75;
+        private Bitmap.CompressFormat mCompressFormat = null;
+
+        private String mTargetPath = null;
+
+        Builder(Context context) {
+            mContext = context;
+        }
+
+        public Builder setQuality(int quality) {
+            mQuality = quality;
+            return this;
+        }
+
+        public Builder setCompressFormat(Bitmap.CompressFormat format) {
+            mCompressFormat = format;
+            return this;
+        }
+
+        public Builder setCustomCalculator(InSampleSizeCalculator customCalculator) {
+            mCustomCalculator = customCalculator;
+            return this;
+        }
+
+        public Builder setCustomTargetPath(String customTargetPath) {
+            mTargetPath = customTargetPath;
+            return this;
+        }
+
+        public Builder load(String imagePath) {
+            mImagePaths.add(imagePath);
+            return this;
+        }
+
+        public Builder load(List<String> imagePaths) {
+            mImagePaths.addAll(imagePaths);
+            return this;
+        }
+
+        public File get(String imagePath) throws IOException {
+            return build().get(mContext, imagePath);
+        }
+
+        public List<File> get(List<String> imagePaths) throws IOException {
+            return build().get(mContext, imagePaths);
+        }
+
+        public void launch(OnCompressListener onCompressListener) {
+            build().launch(mContext, onCompressListener);
+        }
+
+        private BitmapCompressor build() {
+            return new BitmapCompressor(this);
+        }
     }
 }
