@@ -11,7 +11,7 @@ import java.io.IOException;
  * Created by Wesson on 2018/1/20.
  */
 
-public class CompressTask implements Runnable {
+public class CompressTask {
     private File mSrcImage;
     private File mTargetImage;
 
@@ -40,15 +40,6 @@ public class CompressTask implements Runnable {
         mCalculator = calculator;
         mQuality = quality;
         mCompressFormat = compressFormat;
-    }
-
-    @Override
-    public void run() {
-        try {
-            compress();
-        } catch (IOException e) {
-
-        }
     }
 
     public File compress() throws IOException {

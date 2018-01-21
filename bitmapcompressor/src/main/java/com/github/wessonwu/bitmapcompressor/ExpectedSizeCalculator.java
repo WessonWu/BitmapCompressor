@@ -5,11 +5,23 @@ package com.github.wessonwu.bitmapcompressor;
  */
 
 public class ExpectedSizeCalculator implements InSampleSizeCalculator {
+    private int mExpectedSize;
+    private int mAtLeastSize;
+
+    public ExpectedSizeCalculator() {
+        this(960 * 540, 480);
+    }
+
+    public ExpectedSizeCalculator(int expectedSize, int atLeastSize) {
+        mExpectedSize = expectedSize;
+        mAtLeastSize = atLeastSize;
+    }
+
     @Override
     public int calculateInSampleSize(int width, int height) {
-        final int expectedSize = 960 * 540;
+        final int expectedSize = mExpectedSize;
+        final double atLeastSize = mAtLeastSize;
 
-        final double atLeastSize = 540;
         final double longSide = Math.max(width, height);
         final double shortSide = Math.min(width, height);
 

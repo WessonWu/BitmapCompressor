@@ -1,9 +1,12 @@
 package com.github.wessonwu.bitmapcompressor;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.text.TextUtils;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -54,5 +57,12 @@ public class Util {
                 true);
     }
 
+    static String getSuffix(String path) {
+        if (TextUtils.isEmpty(path)) {
+            return ".jpg";
+        }
 
+        return path.substring(path.lastIndexOf("."),
+                path.length());
+    }
 }
