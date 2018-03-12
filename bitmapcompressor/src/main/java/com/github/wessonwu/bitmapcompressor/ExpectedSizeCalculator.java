@@ -20,19 +20,24 @@ public class ExpectedSizeCalculator implements InSampleSizeCalculator {
     @Override
     public int calculateInSampleSize(int width, int height) {
         final int expectedSize = mExpectedSize;
-        final double atLeastSize = mAtLeastSize;
+        final int atLeastSize = mAtLeastSize;
+        if (width <= mExpectedSize ||
+                height <= mAtLeastSize
+                || width * height <= mExpectedSize) {
+            return 1;
+        }
 
-        final double longSide = Math.max(width, height);
-        final double shortSide = Math.min(width, height);
+        final int longSide = Math.max(width, height);
+        final int shortSide = Math.min(width, height);
 
         double scale = shortSide / longSide;
-        double expectedLongSide = Math.sqrt(expectedSize / scale);
-        double expectedShortSide = expectedLongSide * scale;
+        int expectedLongSide = (int) Math.sqrt(expectedSize / scale);
+        int expectedShortSide = (int) (expectedLongSide * scale);
 
         if (expectedShortSide < atLeastSize) {
             expectedShortSide = atLeastSize;
-            expectedLongSide = expectedShortSide / scale;
+            expectedLongSide = (int) (expectedShortSide / scale);
         }
-        return Util.calculateInSampleSize(width, height, (int)expectedLongSide, (int)expectedShortSide);
+        return Util.calculateInSampleSize(width, height, expectedLongSide, expectedShortSide);
     }
 }

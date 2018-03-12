@@ -1,12 +1,10 @@
 package com.github.wessonwu.bitmapcompressor;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.text.TextUtils;
 
-import java.io.File;
 import java.io.IOException;
 
 /**
