@@ -3,11 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/BitmapCompressor.iml" filepath="$PROJECT_DIR$/BitmapCompressor.iml" />
-      <module fileurl="file://E:\GitHub\BitmapCompressor\BitmapCompressor.iml" filepath="E:\GitHub\BitmapCompressor\BitmapCompressor.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://E:\GitHub\BitmapCompressor\app\app.iml" filepath="E:\GitHub\BitmapCompressor\app\app.iml" />
       <module fileurl="file://$PROJECT_DIR$/bitmapcompressor/bitmapcompressor.iml" filepath="$PROJECT_DIR$/bitmapcompressor/bitmapcompressor.iml" />
-      <module fileurl="file://E:\GitHub\BitmapCompressor\bitmapcompressor\bitmapcompressor.iml" filepath="E:\GitHub\BitmapCompressor\bitmapcompressor\bitmapcompressor.iml" />
     </modules>
   </component>
 </project>

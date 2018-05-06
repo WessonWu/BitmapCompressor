@@ -2,6 +2,7 @@ package com.github.wessonwu.bitmapcompressor;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.text.TextUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -94,13 +95,15 @@ public class CompressTask {
         if (mCompressFormat != null) {
             return mCompressFormat;
         }
-        switch (mimeType) {
-            case MIME_JPG:
-                return Bitmap.CompressFormat.JPEG;
-            case MIME_PNG:
-                return Bitmap.CompressFormat.PNG;
-            case MIME_WEBP:
-                return Bitmap.CompressFormat.WEBP;
+        if (!TextUtils.isEmpty(mimeType)) {
+            switch (mimeType) {
+                case MIME_JPG:
+                    return Bitmap.CompressFormat.JPEG;
+                case MIME_PNG:
+                    return Bitmap.CompressFormat.PNG;
+                case MIME_WEBP:
+                    return Bitmap.CompressFormat.WEBP;
+            }
         }
         return Bitmap.CompressFormat.JPEG;
     }

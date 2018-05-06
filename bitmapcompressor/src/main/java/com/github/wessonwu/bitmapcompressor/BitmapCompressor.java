@@ -3,7 +3,6 @@ package com.github.wessonwu.bitmapcompressor;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -113,7 +112,6 @@ public class BitmapCompressor {
      * @param context A context.
      * @see #getImageCacheDir(Context, String)
      */
-    @Nullable
     private File getImageCacheDir(Context context) {
         return getImageCacheDir(context, DEFAULT_DISK_CACHE_DIR);
     }
@@ -126,7 +124,6 @@ public class BitmapCompressor {
      * @param cacheName The name of the subdirectory in which to store the cache.
      * @see #getImageCacheDir(Context)
      */
-    @Nullable
     private File getImageCacheDir(Context context, String cacheName) {
         File cacheDir = context.getExternalCacheDir();
         if (cacheDir != null) {
