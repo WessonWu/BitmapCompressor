@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ public class BitmapCompressor {
         return new Builder(context);
     }
 
-    private CompressTask newCompressTask(Context context, String imagePath) {
+    private CompressTask newCompressTask(Context context, String imagePath) throws IOException {
         return new CompressTask(new File(imagePath),
                 getImageCacheFile(context, Util.getSuffix(imagePath)),
                 mCustomCalculator,
@@ -66,6 +67,7 @@ public class BitmapCompressor {
         if (onCompressListener == null) {
             throw new IllegalArgumentException("OnCompressListener can not be null.");
         }
+        //AsyncTask.THREAD_POOL_EXECUTOR maybe OOM
         AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
             @Override
             public void run() {
@@ -85,12 +87,18 @@ public class BitmapCompressor {
      *
      * @param context A context.
      */
-    private File getImageCacheFile(Context context, String suffix) {
+    private File getImageCacheFile(Context context, String suffix) throws IOException{
+        File targetPathFile;
         if (TextUtils.isEmpty(mTargetPath)) {
-            mTargetPath = getImageCacheDir(context).getAbsolutePath();
+            targetPathFile = getImageCacheDir(context);
+        } else {
+            targetPathFile = new File(mTargetPath);
         }
-
-        String cacheBuilder = mTargetPath + "/" +
+        if (targetPathFile == null) {
+            throw new FileNotFoundException("Image cache directory can not find in the device.");
+        }
+        String targetPath = targetPathFile.getAbsolutePath();
+        String cacheBuilder = targetPath + "/" +
                 System.currentTimeMillis() +
                 (int) (Math.random() * 1000) +
                 (TextUtils.isEmpty(suffix) ? ".jpg" : suffix);
